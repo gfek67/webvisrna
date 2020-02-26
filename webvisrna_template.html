@@ -1,0 +1,2126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 
+        Version history
+        1.0.0 First Feature Complete History 
+     -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> 
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <title>Combined Report</title>
+    <script>
+        // array of compressed codes
+        var compressed_codes = [];
+    </script>
+    <!-- jquery-->
+    <script src="jquery.js"></script>
+    <!-- bootstrap & popper --> 
+    <script src="bootstrap.bundle.js"></script>
+    <!-- jquery UI -->
+    <script src="jqueryui.js"></script>
+    <!-- tabulator -->
+    <script src="tabulator.js"></script>
+    <!-- CSS for jquery UI -->
+    <link rel="stylesheet" type="text/css" href="jqueryui.css"></link>
+    <!-- CSS for tabulator -->
+    <link rel="stylesheet" type="text/css" href="tabulator.css"></link>
+    <!-- plotly.js -->
+    <script src="plotly.js"></script>
+    <!-- cytoscape -->
+    <script src="cytoscape.js"></script>
+    <!-- lz-string.js -->		
+    <script language="javascript" src="lz-string.js"></script>
+    <!-- SheetJs.js -->	
+    <script src="xlsx.full.min.js"></script>
+    <!-- d3.js-->
+    <script src="d3.js"></script>
+    <!-- data for visualization -->
+    <script src="data.js"></script>
+    <!-- processing of compressed codes, make sure that this piece of code is after all the javascript imports else it will not work properly -->
+    <script>
+      // decompress the codes
+      for (i = 0; i < compressed_codes.length; i++) {
+          eval(LZString.decompressFromBase64(compressed_codes[i]));
+      }
+    </script>
+    <!-- custom CSS style -->
+    <style>
+      *{
+        padding: 0;
+        margin: 0;
+      }
+      /* custom class */
+      .nopadding{
+          padding: 0;
+          margin: 0;
+      }
+      .padding5{
+        padding: 30px;
+      }
+      .break5{
+        margin-bottom: 1.7px;
+      }
+      .zentrum{
+        justify-content: center;
+      }
+      .indent5{
+        margin-left: 5px;
+      }
+      .indent20{
+        margin-left: 17px;
+      }
+      .indent50{
+        margin-left: 50px;
+      }
+      .space{
+          margin-right:5px;
+      }
+      .break{
+          margin-bottom: 10px;
+      }
+      table, td, tr, th {
+          border: 1px solid black;
+          border-collapse: collapse;
+      }
+      td, th {
+          padding: 3px;
+      }
+      /* responsive css*/
+      @media only screen and (min-width: 760px){
+         .infoString{
+          transform: translateX(-96px);
+         }
+      }
+      /* main css */
+      body{ 
+          overflow: auto; 
+          font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+          font-size: 15px;
+      }
+      #container{
+          padding: 0;
+          margin: 0; 
+          height: 100%;
+      }
+      #mainMenu{
+          margin-left: 15px;
+      }
+      #theContent{
+          height: 92%;
+      }
+      <!--info style-->
+      #str0{
+          font-size: 45px;
+      }
+      .infoString{
+        font-size: 17px;
+        padding: 17px;
+      }
+      <!--multiqc style-->
+
+      #buttons{
+        height: 17%;
+      }
+      #theTable, #container_dgea{
+        height: 100%;
+        width: 90%;
+        font-size: 15px;
+      }
+      #generalstatistics{
+        height: 100%;
+        margin-left: 15px; 
+        padding-top: 13px;
+      }
+      .sample_title{
+        background-color:lightslategray;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color:linen;
+        font-size: 13px;
+      }
+      .colhead{
+        background-color:lightslategray;
+      }
+      .progress{
+        height: 30px;
+        font-size: 11px;
+      }
+      .progress-bar{
+        font-size: 13px;
+        background-color:lightgreen;
+      }
+      .jumbo{
+        margin: 100px;
+        width: 100%;
+      }
+      #spyScroll{
+        position: relative;
+        width: 100%;
+      }
+      #spyScroll nav{
+        transform: translate(20px, 220px);
+      }
+      .w-nav{
+        width: 100px;
+        margin: 20px;
+        padding-left: 10px;
+      }
+      .infoBox{ 
+          width: 130px;
+          height: 50px;
+      }
+    </style>
+</head>
+<body class="bg-light">
+  <div id="container" class="container-fluid bg-light nopadding">
+    <div id="logo" class="d-flex break indent20">
+        <a href="https://www.a-star.edu.sg/sign/" style="margin-right: 10px; margin-top: 17px;">
+          <img src="data:image/png;base64,%20iVBORw0KGgoAAAANSUhEUgAAALwAAABQCAYAAACjzx9SAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAABCVpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iCiAgICAgICAgICAgIHhtbG5zOmV4aWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vZXhpZi8xLjAvIgogICAgICAgICAgICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgICAgICAgICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+CiAgICAgICAgIDx0aWZmOlJlc29sdXRpb25Vbml0PjI8L3RpZmY6UmVzb2x1dGlvblVuaXQ+CiAgICAgICAgIDx0aWZmOkNvbXByZXNzaW9uPjA8L3RpZmY6Q29tcHJlc3Npb24+CiAgICAgICAgIDx0aWZmOlhSZXNvbHV0aW9uPjcyPC90aWZmOlhSZXNvbHV0aW9uPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICAgICA8dGlmZjpZUmVzb2x1dGlvbj43MjwvdGlmZjpZUmVzb2x1dGlvbj4KICAgICAgICAgPGV4aWY6UGl4ZWxYRGltZW5zaW9uPjE4ODwvZXhpZjpQaXhlbFhEaW1lbnNpb24+CiAgICAgICAgIDxleGlmOkNvbG9yU3BhY2U+MTwvZXhpZjpDb2xvclNwYWNlPgogICAgICAgICA8ZXhpZjpQaXhlbFlEaW1lbnNpb24+ODA8L2V4aWY6UGl4ZWxZRGltZW5zaW9uPgogICAgIC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"></a>
+        <div id="btns" class="d-flex flex-row align-items-end justify-contents">
+          <button class="btn btn-sm btn-dark space">Info</button>
+          <button class="btn btn-sm btn-dark space">MultiQC</button>
+          <button id="pcaplotbtn" class="btn btn-sm btn-dark space">PCA Plot</button>
+          <button class="btn btn-sm btn-dark space">DEG Analysis</button>
+        </div>
+    </div> 
+    <div id="theContent" class="d-flex flex-column align-items-center justify-contents-center" style="border-top: 2px solid black; margin-top: 17px;  padding-left: 8px;">
+      <h1 style="margin-top:76px;">Loading contents...</h1> 
+      <div id="info" class="h-100 w-100 d-none">
+              <h1 id="str0" style="margin-top: 100px;"></h1><br><br>
+              <div class="infoString text-dark d-flex flex-column align-items-start">
+                <p id="str1"></p> 
+                <p id="str7"></p>
+                <p id="str8"></p>
+              </div>
+      </div>
+      <div id="multiqc" class="h-100 w-100 d-none">
+        <div id="btns_mqc" class="btn-group break" style="padding: 25px;">
+            <button type="button" class="btn btn-sm btn-secondary">General Statistics</button>
+            <button type="button" class="btn btn-sm btn-secondary">FastQC</button>
+            <button type="button" class="btn btn-sm btn-secondary">STAR</button>
+            <button type="button" class="btn btn-sm btn-secondary">featureCounts</button> 
+        </div>
+        <div id="theTable" class="d-flex flex-column justify-content-center align-content-center">
+          <div id="generalstatistics" class="w-100 d-none  ">
+            <div id="gsheader" class="row zentrum w-100 break5 text-left">
+              <div class="sample_title col-sm-2 col-2">Sample Names</div>
+              <div class="col-sm-1 col-1 progress"><div id="col0_0" class="progress-bar text-dark text-left" style="width:0%; height:100%">% Assigned</div></div>
+              <div class="col-sm-1 col-1 progress"><div id="col0_1" class="progress-bar text-dark text-left" style="width:0%; height:100%">M Assigned</div></div>
+              <div class="col-sm-1 col-1 progress"><div id="col0_2" class="progress-bar text-dark text-left" style="width:0%; height:100%">% Aligned</div></div>
+              <div class="col-sm-1 col-1 progress"><div id="col0_3" class="progress-bar text-dark text-left text-left" style="width:0%; height:100%">M Aligned</div></div>
+              <div class="col-sm-1 col-1 progress"><div id="col0_4" class="progress-bar text-dark text-left" style="width:0%; height:100%">% Dups</div></div>
+              <div class="col-sm-1 col-1 progress"><div id="col0_5" class="progress-bar text-dark text-left" style="width:0%; height:100%">% GC</div></div>
+              <div class="col-sm-1 col-1 progress"><div id="col0_6" class="progress-bar text-dark text-left" style="width:0%; height:100%">Length</div></div>
+              <div class="col-sm-1 col-1 progress"><div id="col0_7" class="progress-bar text-dark text-left" style="width:0%; height:100%">% Failed</div></div>
+              <div class="col-sm-1 col-1 progress"><div id="col0_8" class="progress-bar text-dark text-left" style="width:0%; height:100%">M Seqs</div></div>
+            </div>
+          </div>
+          <div id="fastqc" class="h-100  d-none">
+            <div id="spyScroll" data-spy="scroll" data-target=".navbar" data-offset="50"> 
+              <nav class="bg-secondary navbar-secondary fixed-top w-nav" style="width:169px">  
+                <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link text-light" href="#section1">Sequence Quality Histogram</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-light" href="#section2">Per Sequence Quality Scores</a>
+                  </li> 
+                  <li class="dropdown navitem"><a class="text-light dropdown-toggle" data-toggle="dropdown" href="#">Per Sequence GC Content<span class="caret"></span></a>
+                    <ul class="bg-light dropdown-menu">
+                      <li id="section3p" class="navitem indent5"><a class="text-secondary" href="#section3">Percentanges</a></li>
+                      <li id="section3c" class="navitem indent5"><a class="text-secondary" href="#section3">Counts</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-light" href="#section4">Per Base N Content</a>
+                  </li> 
+                  <li class="nav-item">
+                    <a class="nav-link text-light" href="#section6">Sequence Duplication Levels</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link text-light" href="#section7">Adapter Content</a>
+                  </li> 
+                </ul>
+              </nav> 
+              <div id="section1" class="container-fluid bg-light" style="padding-top:0px;padding-bottom:70px;padding-left:100px;height:800px;width:100%;margin:50px;"></div>
+              <div id="section2" class="container-fluid bg-light" style="padding-top:0px;padding-bottom:70px;padding-left:100px;height:800px;width:100%;margin:50px;"></div>
+              <div id="section3" class="container-fluid bg-light" style="padding-top:0px;padding-bottom:70px;padding-left:100px;height:800px;width:100%;margin:50px;"></div>
+              <div id="section4" class="container-fluid bg-light" style="padding-top:0px;padding-bottom:70px;padding-left:100px;height:800px;width:100%;margin:50px;"></div> 
+              <div id="section6" class="container-fluid bg-light" style="padding-top:0px;padding-bottom:70px;padding-left:100px;height:800px;width:100%;margin:50px;"></div>
+              <div id="section7" class="container-fluid bg-light" style="padding-top:0px;padding-bottom:70px;padding-left:100px;height:800px;width:100%;margin:50px;"></div> 
+            </div> 
+          </div>
+          <div id="star" class="h-100 w-100 d-none">
+            <div id="targetStar" class="row w-100 bg-light "></div>
+          </div>
+          <div id="featurecounts" class="h-100 w-100 d-none">
+            <div id="targetDiv" class="row w-100 bg-light  "></div>
+          </div>
+        </div>
+      </div>
+      <div id="pcaplot" class="h-100 w-100 d-none">
+        <!-- div for pca content -->
+        <div id="content" class=""></div>
+        <!-- dialog -->
+        <div id="dialog"></div>
+      </div>
+      <div id="deganalysis" class="h-100 w-100 d-none  ">
+        <div id="btns_dgea" class="btn-group d-flex flex-row align-items-center break ">
+            <button type="button" class="btn btn-sm btn-secondary  ">Summary</button>
+            <button type="button" class="btn btn-sm btn-secondary  dropdown-toggle" data-toggle="dropdown">Comparison</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="downloadXlsx(degSheetNames)">Download Table</button>
+            <div id="dropdown_dgea" class="dropdown-menu"></div>
+        </div>
+        <div id="subbuttons" class="d-flex  align-self-start justify-content-start">
+          <div id="searchGeneName" style="margin:3px;" class="align-self-end d-none">Search gene name:</div>
+        </div> 
+        <div id="container_dgea" class="d-flex w-100 flex-column justify-content-center align-content-center">
+          <div id="dgeaSummary" class="w-100 flex-column justify-content-center align-items-center  "></div>
+        </div>
+        <div id="dialog2"></div>
+      </div>
+      <p style="border-top: 2px solid black; margin-top: 100px; padding-left: 8px; font-size:12px; font-weight: bold;" class="w-100"> Created by the <a href="https://www.a-star.edu.sg/sign/TECHNOLOGY/Bioinformatics">Bioinformatics Group</a> at the Singapore Immunology Network (SIgN), A*STAR<br>   Confidential<span style="margin-right: 5px; float: right;">Version 1.0</span></p>
+    </div>
+  </div>
+  <!-- page transitions, responsiveness & css-related jquery -->
+  <script> 
+  $(document).ready(_=>{
+    window.sheetNames = {};
+    if (typeof data == "string"){
+      data = LZString.decompressFromBase64(data);
+      data = JSON.parse(data);
+    };
+    // info string margin
+    $(".infoString > p").css("margin", "5px")
+    $(".infoString > p").css("margin-left", "0px")
+
+    // responsive interface upon resizing;                
+    $(window).resize(function(){
+      var w = $("body").css('width');
+      var h = $("body").css('height');
+      var con = $("#container").css('height');
+      var log = $("#logo").css('height');
+      var contentHeight = Number(con.replace("px", "")) - Number(log.replace("px", ""));  
+      $(document).ready(_=>{
+        plotPCA();
+        var traces = [];
+        sampleT = [];
+        mqc = data[2];
+        sqh = mqc["report_plot_data"]["fastqc_per_base_sequence_quality_plot"]["datasets"][0];
+        for(var f=0; f<sqh.length; f++){
+          xys = sqh[f]["data"];
+          sampleY = [];
+          sampleX = [];
+          for(var i=0; i<xys.length; i++){
+            ys = xys[i][1][0];
+            sampleY.push(ys);
+            xs = xys[i][0][0];
+            sampleX.push(xs);
+          };
+          sampleT.push(sqh[f]["name"][0]);
+          traces[f] = {
+            x: sampleX,
+            y: sampleY,
+            type: 'scatter',
+            name: sqh[f]["name"][0]  
+          };
+        };
+        pHeight =   $('#sequenceQualityHistogram').height();
+        pWidth = $('#sequenceQualityHistogram').width()
+        var layout = {
+          autosize: true,
+          width: pWidth,
+          height: pHeight,
+        }; 
+      });
+    });
+
+    //constructor function for customized page transitions;
+    function ReturnPage(btnsDiv, defaultDiv, subId, subCall){
+      this.retPage = ()=>{
+        returnPg = (theId)=>{
+          console.log({theId})
+          if(theId===null){
+              console.log("theId is null")
+              returnPg(defaultDiv);
+          } else if(theId==undefined){
+              console.log("theId is undefined");
+              returnPg(defaultDiv);
+          } else {
+            if($(`#${theId}`).hasClass("d-none") || !$(`#generalstatistics`).hasClass("d-none")){
+            $(`#${theId}`).removeClass("d-none");
+            $(`#${theId}`).addClass("d-flex flex-column justify-content-center align-items-center");
+            $(`#${theId}`).siblings().not(`#theContent > p`).removeClass("d-flex").addClass("d-none");
+            };
+            if($(`#${subId}`).hasClass("d-flex")){
+            subCall();
+            }; 
+            if($(`#generalstatistics`).hasClass("d-flex")){
+              $(`#generalstatistics`).removeClass("d-flex");
+            };
+            if($(`#fastqc`).hasClass('flex-column') && $(`#fastqc`).hasClass('justify-content-center') ){
+              $(`#fastqc`).removeClass('justify-content-center');
+            }
+          }
+        };
+        
+        for(var i=0; i<document.getElementById(btnsDiv).childElementCount; i++){
+          var theButtons = document.getElementById(btnsDiv).children;
+            
+          theButtons[i].addEventListener("click", function(){
+            var theId = this.innerText.replace(" ", "").toLowerCase(); console.log(this);
+            returnPg(theId);
+          })
+        };
+        returnPg();
+      } 
+    }; 
+    // ReturnPage #1: coordinating page transition for main pages (ie: info, multiqc, pca, and deg analysis);      
+    var mqc = new ReturnPage('btns_mqc', 'generalstatistics');
+    var main = new ReturnPage('btns', 'info', 'multiqc', mqc.retPage)
+    main.retPage(); 
+  })
+  </script>
+  <!-- script for info -->
+  <script>
+      $(document).ready(_=>{
+        // string 1: n of pairend and n of singend;
+        var pairend = 0, singend = 0;
+        if(data[2] !== undefined){
+          var mqc = data[2];
+          var sampleFqc = mqc["report_data_sources"]["FastQC"]["all_sections"];
+          var fqc = Object.keys(sampleFqc);
+          for(var i=0; i<fqc.length; i++){ 
+            if(fqc.sort()[i].slice(0, -2) === fqc.sort()[i+1].slice(0, -2) && fqc.sort()[i].slice(-2) !== fqc.sort()[i+1].slice(-2)){ 
+            pairend += 1; 
+            i++; 
+            } else {
+            singend += 1;
+            } 
+          }; 
+        }; 
+        $('#str0').text(`Report generated on ${data[5][0]}`)
+        $('#str1').text(`Found ${pairend} paired-end and ${singend} single-end sample(s).`);
+        // $('#str2').text(`Counts data read with ${data[0]["counts"].length} row(s) and ${data[0]["samples"].length} column(s).`);
+        // $('#str3').text(`GTF data read with ${data[0]["genes"].length} gene(s).`);
+        // $('#str4').text(`Phenotype file contains ${data[0]["samples"].length} samples information.`);
+        // $('#str5').text(`Counts file contains ${data[0]["samples"].length} samples information.`);
+        if(data[5][1] !== 'it is null'){ 
+          // $('#str6').text(`$8 samples are in common between phenotype and count files.`);
+          console.log('no str6');
+        }
+        $('#str7').text(`${data[5][2]}`);
+        $('#str8').text(`${data[5][3]}`);
+      });
+  </script>
+  <!-- script for info -->
+  <script>
+      $(document).ready(_=>{
+        // string 1: n of pairend and n of singend;
+        var pairend = 0, singend = 0;
+        if(data[2] !== undefined){
+          var mqc = data[2];
+          var sampleFqc = mqc["report_data_sources"]["FastQC"]["all_sections"];
+          var fqc = Object.keys(sampleFqc);
+          for(var i=0; i<fqc.length; i++){ 
+            if(fqc.sort()[i].slice(0, -2) === fqc.sort()[i+1].slice(0, -2) && fqc.sort()[i].slice(-2) !== fqc.sort()[i+1].slice(-2)){ 
+            pairend += 1; 
+            i++; 
+            } else {
+            singend += 1;
+            } 
+          }; 
+        }; 
+        $('#str0').text(`Report generated on ${data[5][0]}`)
+        $('#str1').text(`Found ${pairend} paired-end and ${singend} single-end sample(s).`);
+        // $('#str2').text(`Counts data read with ${data[0]["counts"].length} row(s) and ${data[0]["samples"].length} column(s).`);
+        // $('#str3').text(`GTF data read with ${data[0]["genes"].length} gene(s).`);
+        // $('#str4').text(`Phenotype file contains ${data[0]["samples"].length} samples information.`);
+        // $('#str5').text(`Counts file contains ${data[0]["samples"].length} samples information.`);
+        if(data[5][1] !== 'it is null'){ 
+          // $('#str6').text(`$8 samples are in common between phenotype and count files.`);
+          console.log('no str6');
+        }
+        $('#str7').text(`${data[5][2]}`);
+        $('#str8').text(`${data[5][3]}`);
+      });
+  </script>
+  <!-- script for multiqc -->
+  <script>
+    // getting the data 
+    $(document).ready(_=>{ 
+      var mqc = data[2];
+      var fc = Object.keys(mqc["report_data_sources"]["featureCounts"]["all_sections"]);
+      var k = Object.keys(mqc["report_saved_raw_data"]["multiqc_general_stats"]);  
+      // to get merged sample names
+      var pA = [], pAssigned = [];
+      for(var i=0; i<k.length; i++){
+          if(!k[i].endsWith("_1") && !k[i].endsWith("_2")){
+              pA.push(k[i]);
+          }
+      };
+      pA.sort();
+      k.sort();
+      var snfcprime = [];
+      for(var i=0; i<k.length; i++){
+        if(k[i].includes('_')){
+          snfcprime.push(k[i]);
+        }
+      }; 
+      cq_snfcprime = snfcprime;
+      //constructor function for multiqc use
+
+      //creating lock to stop function infinite stacking within General Stats
+      var lockedS = 0, lockedFC = 0;  
+      function MultiQCTools(){
+        this.getArray = function(indexM, keyM, k){
+          var outArray = [];
+          for(var i=0; i<k.length; i++){
+            var kfc = Object.keys(mqc["report_saved_raw_data"]["multiqc_general_stats"][k[i]]); 
+            if(kfc[indexM]==keyM){
+              outArray.push(mqc["report_saved_raw_data"]["multiqc_general_stats"][k[i]][kfc[indexM]][0]);
+              pAA = outArray;
+            } else if(kfc[indexM-2]==keyM){
+              outArray.push(mqc["report_saved_raw_data"]["multiqc_general_stats"][k[i]][kfc[indexM-2]][0]);
+              pAA = outArray;
+            }else{
+              outArray.push(0)
+            };
+          };
+          return outArray;
+        }, 
+        this.getHighest = function(arrayIn){
+          var tempArray = [0];
+          for(var i=0; i<arrayIn.length; i++){
+            if(tempArray[0]<arrayIn[i]){
+            tempArray[0] = arrayIn[i];
+            }; 
+          };
+          return tempArray[0];
+        },
+        this.colorGrad = function(progDiv, bar, c25, c50, c75, c){
+          if(bar <= 25){
+            $(`#${progDiv}`).css("background-color", c25);
+          } else if(bar <= 50){
+            $(`#${progDiv}`).css("background-color", c50);
+          } else if(bar <= 75){
+            $(`#${progDiv}`).css("background-color", c75);
+          } else {
+            $(`#${progDiv}`).css("background-color", c);
+          } 
+        }, 
+        this.chartData = function(snfc, mainfc, qc){
+          var chartData = {};
+          if(qc === "fc"){
+            for(var i = 0; i<snfc.length; i++){
+            chartData[`${snfc[i]}`] = [
+              mainfc[snfc[i]]["Assigned"][0],
+              mainfc[snfc[i]]["Unassigned_MultiMapping"][0],
+              mainfc[snfc[i]]["Unassigned_NoFeatures"][0],
+              mainfc[snfc[i]]["Unassigned_Ambiguity"][0]
+            ]
+            };
+          } else if(qc === "star"){
+            for(var i = 0; i<snfc.length; i++){
+              chartData[`${snfc[i]}`] = [
+                mainfc[snfc[i]]["uniquely_mapped"][0],
+                mainfc[snfc[i]]["multimapped"][0],
+                mainfc[snfc[i]]["multimapped_toomany"][0],
+                mainfc[snfc[i]]["unmapped_tooshort"][0],
+                mainfc[snfc[i]]["unmapped_other"][0]
+              ]
+            };
+          } 
+          return chartData;
+        }, 
+        this.showBarChart = function(targetDiv, chartData, bgf, barHeader, mqcDiv, xRefSFC){ 
+          // 1. inserting template divs;
+          if($(`#${targetDiv}`).children().length === 0){ 
+              // 1.1 prepending 2 divs: Graph Title and %-M buttons;
+              $(`#${mqcDiv.replace("per","")}`).prepend(`
+                <div id="barTitle${mqcDiv}" class="bg-light d-flex flex-row justify-content-center align-items-end text-dark" style='margin-top:100px;'><h1>${barHeader}<h1></div>
+                <div class="btn-group tog-group">
+                <button id="togm${mqcDiv}" class="btn btn-sm btn-secondary">M</button>
+                <button id="togp${mqcDiv}" class="btn btn-sm btn-secondary">%</button>
+                </div>
+              `);
+              // 1.2 appending 2 divs: Rowname-containing div and Barcharts-containing div;
+              $(`#${targetDiv}`).append(`
+                <div id="rownames${mqcDiv}" class="bg-light d-flex flex-column align-items-center justify-content-center col-1 col-sm-1  "></div>
+                <div id="charts${mqcDiv}" class="bg-light d-flex flex-column align-items-center justify-content-center col-11 col-sm-11 "></div>
+              `);
+              // 1.3 inserting legend div into the respective mqcDiv (star or featurecounts);
+              if(mqcDiv === 'star' || mqcDiv === 'starper'){
+                $(`#${mqcDiv.replace("per","")}`).append(`
+                  <div id="legends${mqcDiv}" class="d-flex flex-row justify-content-center align-items-end bg-light">
+                    <div><span class="dot0${mqcDiv}"></span></div><div class="dottext text-dark">&nbsp Uniquely mapped &nbsp &nbsp</div>
+                    <div><span class="dot1${mqcDiv}"></span></div><div class="dottext text-dark">&nbsp Mapped to multiple loci &nbsp &nbsp</div>
+                    <div><span class="dot2${mqcDiv}"></span></div><div class="dottext text-dark">&nbsp Mapped to too many loci &nbsp &nbsp</div>
+                    <div><span class="dot3${mqcDiv}"></span></div><div class="dottext text-dark">&nbsp Unmapped: too short &nbsp &nbsp</div>
+                    <div><span class="dot4${mqcDiv}"></span></div><div class="dottext text-dark">&nbsp Unmapped: other &nbsp &nbsp</div>
+                  </div>
+                `);
+              }else if(mqcDiv === 'featurecounts' || mqcDiv === 'featurecountsper'){
+                $(`#${mqcDiv.replace("per","")}`).append(`
+                  <div id="legends${mqcDiv}" class="d-flex flex-row justify-content-center align-items-end bg-light">
+                    <div><span class="dot0${mqcDiv}"></span></div><div class="dottext text-dark">&nbsp Assigned &nbsp &nbsp</div>
+                    <div><span class="dot1${mqcDiv}"></span></div><div class="dottext text-dark">&nbsp Unassigned_Multimapping &nbsp &nbsp</div>
+                    <div><span class="dot2${mqcDiv}"></span></div><div class="dottext text-dark">&nbsp Unassigned_NoFeatures &nbsp &nbsp</div>
+                    <div><span class="dot3${mqcDiv}"></span></div><div class="dottext text-dark">&nbsp Unassigned_Ambiguity &nbsp &nbsp</div>
+                  </div>
+                `);
+              }
+          }; 
+          //2. getting the object keys of the chart data;
+          var cd = Object.keys(chartData);   
+          var cdv = Object.values(chartData);
+
+          //3. getting the sum value of each samples;
+          var reduced = [];
+          for(var i=0; i<cd.length; i++){
+            var totaled = cdv[i].reduce((total, num)=>{
+              return total + num;
+            });
+            reduced.push(totaled);
+          };
+          cdv = reduced;
+
+          //4. getting the highest out of all sums;
+          var hC = this.getHighest(cdv); 
+          function whichData(end, i, chartData, cdv, bl){
+            if(end===true){ 
+              return Number((chartData/cdv[i]*bl).toFixed(2)) + "%";
+            }else{
+              return Number((chartData/1000000).toFixed(2)) + "M";
+            }
+          }; 
+
+          //5. creating the graphs
+          $(`#charts${mqcDiv}`).append(`
+            <svg id="parentSvg${mqcDiv}" width='${$(`#charts${mqcDiv}`).width()+170}' height='${27*cd.length}'></svg>
+          `);
+          $(document).ready(_=>{
+            //5.1  iterate data per sample length
+            for(var i=0; i<cd.length; i++){ 
+              var bl = cdv[i]/hC*100;
+
+              // 5.2 calibrating unit and factor respective to % or M values;
+              if(mqcDiv.endsWith("per")){
+                bl = 100;
+                factor = bl;
+                unit = "%"
+              } else {
+                factor = hC/1000000;
+                unit = "M"
+              };
+                
+              // 5.3 inserting svg to respective charts div;
+              if($(`#parentSvg${mqcDiv}`).children().length < cd.length){
+                d3.select(`#parentSvg${mqcDiv}`)
+                .append('g')
+                .attr('id', `bar${mqcDiv}_${i}`)
+                .attr('class', `chart${mqcDiv}`)
+                .attr('transform', `translate(0, ${25*i})`);
+              }
+                
+              // 5.4 iterate data per sample's paremeter length
+              for(var j=0; j<chartData[cd[i]].length; j++){
+
+                // 5.4.1 getting respective cumulative out of each parameter's value for being used as translation unit.
+                var cul = [], fg = chartData[cd[i]];  
+                for(var k = 0; k < fg.length; k++){
+                  if(k == 0){
+                      cul[k] = fg[k]
+                  }else{
+                      cul[k] = fg[k] + cul[k-1]
+                  };
+                }; 
+                var width = $(`#charts${mqcDiv}`).width(), barHeight = 25;
+                var width = xRefSFC;
+
+                // 5.4.1 setting default d3 scales;
+                var x = d3.scaleLinear()
+                    .domain([0, hC])
+                    .range([0, width-100]); 
+                // setting default d3 scales for % axis;
+                var xP = d3.scaleLinear()
+                    .domain([0, 100])
+                    .range([0, width-100]);
+                //setting default d3 scales for % data;
+                var xPercent=(h, d)=>{
+                  var xPer = d3.scaleLinear()
+                  .domain([0, h])
+                  .range([0, width-100]);
+                  return (xPer(d));
+                };
+
+                // 5.4.3 styling necessary css for each bar at respective div;
+                var chartStar = d3.selectAll(`.chart${mqcDiv}`)
+                  .style("text-anchor", "end")
+                  .style("overflow", "hidden")
+                  .style("font", "13px sans-serif")
+                  .attr("width", width)
+                  .attr("height", barHeight);
+                var chartFC = d3.selectAll(`.chart${mqcDiv}`)
+                  .style("text-anchor", "end")
+                  .style("overflow", "hidden")
+                  .style("font", "13px sans-serif")
+                  .attr("width", width)
+                  .attr("height", barHeight);
+                var t = d3.transition()
+                  .duration(1700); 
+
+                // 5.4.4 styling for each parameter's bar color; 
+                var barStar = chartStar.selectAll("g")
+                  .data(fg)
+                  .enter().append("g")
+                    .style("fill", function(d,index){return `${bgf[index]}`;});
+                var barFC = chartFC.selectAll("g")
+                  .data(fg)
+                  .enter().append("g")
+                    .style("fill", function(d,index){return `${bgf[index]}`;}); 
+
+                //  5.4.5 assigining variable to d3 selector per each sample bar;
+                var ditri = [];
+                ditri[i] = d3.select(`#bar${mqcDiv}_${i}`);
+                //  5.4.6 translating each parameter's bar at respective div;
+                if(mqcDiv.endsWith("per")){
+                  ditri[i].select('g').attr('transform', `translate(${xPercent(100, -(cul[0]/cdv[i]*bl))},0)`);
+                  ditri[i].selectAll("g")
+                    .attr("transform", function(d, j){var dex=[0, cul[0]/cdv[i]*bl, cul[1]/cdv[i]*bl, cul[2]/cdv[i]*bl, cul[3]/cdv[i]*bl]; return `translate(${xPercent(100, dex[j])+50},0)`;});
+                }else{
+                  ditri[i].select('g').attr('transform', `translate(${x(-(cul[0]))},0)`);
+                  ditri[i].selectAll("g")
+                    .attr("transform", function(d, j){var dex=[0, cul[0], cul[1], cul[2], cul[3]]; return `translate(${x(dex[j])+50},0)`;});
+                };
+                
+                // 5.4.7 infobox on hover
+                var legendStar = [
+                  'Uniquely mapped',
+                  'Mapped to multiple loci',
+                  'Mapped to too many loci',
+                  'Unmapped: too short',
+                  'Unmapped: other'
+                ];
+                var legendFC = [
+                  'Assigned',
+                  'Unassigned_Multimapping',
+                  'Unassigned_NoFeatures',
+                  'Unassigned_Ambiguity'
+                ];
+                ditri[i].on('mouseover', function(){  
+                  var idx = this.id;
+                  idx = idx.slice(idx.indexOf('_')+1, idx.length); 
+                  var tempG = d3.select(`#parentSvg${mqcDiv}`).append('g')
+                    .attr('id', `tempG_${this.id}`);
+                  tempG.append('rect')
+                    .attr('id', `infoBox_${this.id}`)
+                    .style('width', 350)
+                    .style('height', 117) 
+                    .style('fill', '#f8f9fa')
+                    .style('fill-opacity', '0.9')
+                    .style('class', 'infoBox')
+                    .attr('x', 113)
+                    .attr('y', 17 + 13*idx)
+                    .attr('rx', '3')
+                    .attr('ry', '3');
+
+                  // temporary chart data
+                  tempG.append('text')
+                  .attr('id', `infoBoxSample${idx}`)
+                  .attr('class', `infoText`)
+                  .attr('fill', '#343a40')
+                  .attr('x', 113+13)
+                  .attr('y', 17+25 + 13*idx)
+                  .attr('font-size', '15')
+                  .attr('text-decoration', 'underline')
+                  .attr('text-decoration-color', '#17a2b8')
+                  .text(`${cd[idx]}`);
+
+                  var tcd = chartData[cd[idx]];
+                  for(var f in tcd){
+                    tempG.append('text')
+                    .attr('id', `infoBoxDesc${tcd[f]}`)
+                    .attr('class', `descText`)
+                    .attr('fill', '#343a40')
+                    .attr('x', 113+13)
+                    .attr('y', 17+45 + 13*idx + (15*f))
+                    .attr('font-size', '12')
+                    .text(()=>{
+                      if(mqcDiv=='star'){
+                        return `${legendStar[f]}:  ${tcd[f]}`;
+                      }else if(mqcDiv=='starper'){
+                        return `${legendStar[f]}:  ${whichData(mqcDiv.endsWith('per'), idx, tcd[f], cdv, bl)}`;
+                      }else if(mqcDiv=='featurecountsper'){
+                        return `${legendFC[f]}:  ${whichData(mqcDiv.endsWith('per'), idx, tcd[f], cdv, bl)}`;
+                      }else{
+                        return `${legendFC[f]}:  ${tcd[f]}`;
+                      };
+                    });
+                  }; 
+                })
+                .on('mouseout', function(){
+                  var idx = this.id;
+                  idx = idx.slice(idx.indexOf('_')+1, idx.length);
+                  d3.select(`#tempG_${this.id}`).remove();
+                  d3.select(`#infoBox_${this.id}`).remove();
+                  d3.select(`#infoBoxSample${idx}`).remove();
+                });
+
+                // 5.4.6 assigning bar's width for STAR
+                barStar.append("rect")
+                    .attr("height", barHeight-1); 
+                if(mqcDiv.endsWith("per")){
+                  barStar.selectAll("rect")
+                    .attr("width", function(d){return xPercent(100, (d/cdv[i]*bl)) + "px";}) 
+                }else{
+                  barStar.selectAll("rect")
+                    .attr("width", function(d){return x(d) + "px";}); 
+                };
+
+                // 5.4.7 assigning bar's width for feature counts;
+                barFC.append("rect")
+                  .attr("height", barHeight-1);
+                if(mqcDiv.endsWith("per")){
+                  barFC.selectAll("rect")
+                    .attr("width", function(d){return xPercent(100, (d/cdv[i]*bl)) + "px";}) 
+                }else{
+                  barFC.selectAll("rect")
+                    .attr("width", function(d){return x(d) + "px";});
+                };  
+
+                // 5.4.8 assigning text to each bar for STAR;
+                barStar.append("text")
+                  .attr("x", function(d, j){
+                    if(mqcDiv.endsWith('per')){
+                      return xPercent(100, (d/cdv[i]*bl))-3;
+                    }else{
+                      return x(d) - 3;
+                    };
+                  })
+                  .attr("y", barHeight / 2)
+                  .attr("dy", ".35em")
+                  .style("fill", "black");
+
+                // 5.4.9 assigning text to each bar for feature counts;
+                barFC.append("text")
+                  .attr("x", function(d, j){
+                      if(mqcDiv.endsWith('per')){
+                        return xPercent(100, (d/cdv[i]*bl))-3;
+                      } else {
+                        return x(d) - 3;
+                      }
+                    })
+                  .attr("y", barHeight / 2)
+                  .attr("dy", ".35em")
+                  .style("fill", "black");
+
+                  ditri[i].selectAll("text")
+                    .text(function(d, j){
+                      if(!(x(d)-3 < 5)){
+                        return whichData(mqcDiv.endsWith("per"),i,d,cdv,bl);
+                      } else {
+                        return "";
+                      };  
+                    })
+                    .attr('typeJ', (d, j)=>{return `${j}`;});  
+                  
+                  // 5.4.10 fixing necessary styling for legend css;
+                  $(`.dot${j}${mqcDiv}`).css({"height":"17px", "width":"17px", "background-color":`${bgf[j]}`, "border-radius":"50%", "display":"flex", "flex-direction":"row", "align-self":"center"});
+              };  
+            }; 
+            //5.5 setting up axis;
+            var lastSvg = d3.select(`#bar${mqcDiv}${cd.length-1}`); 
+            lastSvg.attr('height', '50'); 
+            var xAxis = d3.axisBottom().scale(x);
+            var xAxisP = d3.axisBottom().scale(xP);
+
+            //5.5.1 fixing necessary css;
+            d3.selectAll(".axis text")
+              .style("fill", "black")
+              .style("font", "sans-serif"); 
+            d3.selectAll(".axis path, .axis line")
+              .style("fill", "none")
+              .style("stroke", "black")
+              .style("shape-rendering", "crispEdges");
+            
+            // 5.5.2 preparing necessary unit as string;
+            var d3index = [];
+            for(var i=0; i<20; i++){
+              d3index.push('M');
+            };
+            var testI = [];
+            var sM = [];
+
+            // 5.5.3 appending the axis to the last bar respective to %-M; 
+            if(!mqcDiv.endsWith('per')){
+              d3.select(`#bar${mqcDiv}${cd.length-1}`).append("g")
+                .attr('id', `xax${mqcDiv}`)
+                .attr("class", "x axis")
+                .attr("transform", `translate(50,${barHeight})`) 
+                .call(xAxis);
+              // 5.5.3.2 manually subtituting d3 default string with the proper unit string;
+              d3.selectAll(`#xax${mqcDiv}`).selectAll('g').select('text').text((d, i)=>{
+
+                var scaleTag = $(`#xax${mqcDiv} g:nth-child(${i+2}) > text`).text(); 
+                scaleTag = +scaleTag.replace(/,/g, '') / 1e6;
+                sM.push(scaleTag);
+                return scaleTag + 'M'
+              });   
+            }else if(mqcDiv.endsWith('per')){
+              d3.select(`#bar${mqcDiv}${cd.length-1}`).append("g")
+                .attr('id', `xax${mqcDiv}`)
+                .attr("class", "x axis")
+                .attr("transform", `translate(50,${barHeight})`) 
+                .call(xAxisP);
+                // 5.5.3.2 manually subtituting d3 default string with the proper unit string;
+              d3.selectAll(`#xax${mqcDiv}`).selectAll('g').select('text').text((d, i)=>{
+                var scaleTag = $(`#xax${mqcDiv} g:nth-child(${i+2}) > text`).text();
+                scaleTag = +scaleTag.replace(/,/g, ''); 
+                return scaleTag + '%';}); 
+            }; 
+            onceBar = {};  
+            //5.6 appending text into the first parameter's bar as row name;
+            for(var i=0; i<cd.length; i++){ 
+              var sampleName= [];
+              sampleName[i] = d3.select(`#bar${mqcDiv}_${i}`);
+              sampleName[i].select('g').append('text')
+                .attr('class', 'labels')
+                .attr('x', '-10')
+                .attr('y', `${barHeight/2}`)
+                .attr('dy', '.35em')
+                .style('fill', 'black')
+                .attr('text-anchor', 'end')
+                .text(`${cd[i]}`);
+              sampleName[i].select('g').append('circle');  
+            }; 
+            $(`#rownames${mqcDiv}`).append(`
+            <div id="rown${i}" class="rowname break7 text-secondary text-right" style="height: 27px">&nbsp</div>
+            `) 
+
+            // 5.7 Pimping necessary css;
+            $(`#rownames${mqcDiv}`).css({"margin-right":"0px", "padding-right":"0px"});
+            $(`#charts${mqcDiv}`).css({"margin-left":"0px", "padding-left":"5px"});
+            $(`#bar${mqcDiv}0, #rown0`).css("margin-top", "14px");
+            $(".break7").css("margin-bottom", "7px");
+            $(`#legends${mqcDiv}`).css({"padding-bottom":"0px", "padding-top":"0px"});
+            $(".dottext").css("font-size", "13px");
+            $(`#barTitle${mqcDiv}`).css("height", "10%");
+            $(`#${targetDiv}`).css("height", "75%");
+            $(`#legends${mqcDiv}`).css("height","10%");
+            $(`#legends${mqcDiv} > div`).css("height","100%").addClass("d-flex flex-row justify-content-center align-items-center");
+            
+            // 5.8 Toggling between % to M graphs;
+            $(`.tog-group`).children().click(function(){
+              if($(this).attr("id").startsWith("togpstar") && mqcDiv == "star"){
+                $(`#${targetDiv}`).siblings().remove();
+                $(`#${targetDiv}`).html("");
+                gs.showBarChart(targetDiv, chartData, bgf, barHeader, `starper`, xRefSFC);
+              } else if($(this).attr("id").startsWith("togmstar") && mqcDiv == "starper"){
+                $(`#${targetDiv}`).siblings().remove();
+                $(`#${targetDiv}`).html("");
+                gs.showBarChart(targetDiv, chartData, bgf, barHeader, `star`, xRefSFC);
+              } else if($(this).attr("id").startsWith("togpfeat") && mqcDiv == "featurecounts"){
+                // console.log(targetDiv);
+                $(`#${targetDiv}`).siblings().remove();
+                $(`#${targetDiv}`).html("");
+                // console.log({chartData});
+                gs.showBarChart(targetDiv, chartData, bgf, barHeader, `featurecountsper`, xRefSFC);
+              } else if($(this).attr("id").startsWith("togmfeat") && mqcDiv == "featurecountsper"){
+
+                $(`#${targetDiv}`).siblings().remove();
+                $(`#${targetDiv}`).html("");
+                gs.showBarChart(targetDiv, chartData, bgf, barHeader, `featurecounts`, xRefSFC);
+              } 
+            });
+
+            // 5.9 Responsive bar upon resizing;
+            $(window).resize(()=>{
+              if($('#featurecounts').hasClass('d-flex') && $('#multiqc').hasClass('d-flex')){
+                lockedFC = lockedFC + 1;
+              };
+              if($('#star').hasClass('d-flex') && $('#multiqc').hasClass('d-flex')){
+                lockedS = lockedS + 1;
+              };
+              if(lockedFC <= 1){
+                if($('#featurecounts').hasClass('d-flex') && $('#multiqc').hasClass('d-flex')){
+                  wFCounts = $('#theTable').width();
+                  $(`#targetDiv`).siblings().remove();
+                  $(`#targetDiv`).html("");
+                  if(mqcDiv.endsWith('per')){
+                    // console.log({wFCounts, feat: mqcDiv, fc: 'fc'}); 
+                    gs.showBarChart('targetDiv', chartFc, bgfc, "featureCounts: Assignments", "featurecountsper", wFCounts);
+                  } else {
+                    // console.log({wFCounts, featper: mqcDiv, st: 'st'});
+                    gs.showBarChart('targetDiv', chartFc, bgfc, "featureCounts: Assignments", "featurecounts", wFCounts);
+                  }  
+                };
+              };
+              if(lockedS <= 1){
+                if($('#star').hasClass('d-flex') && $('#multiqc').hasClass('d-flex')){
+                  wStar = $('#theTable').width();
+                  $(`#targetStar`).siblings().remove();
+                  $(`#targetStar`).html("");
+                  if(mqcDiv.endsWith('per')){
+                    // console.log({wStar, starper: mqcDiv, st: 'st'});
+                    gs.showBarChart('targetStar', chartS, bgw, "STAR: Alignment Scores", "starper", wStar);
+                  }else{
+                    // console.log({wStar, star: mqcDiv, st: 'st'});
+                    gs.showBarChart('targetStar', chartS, bgw, "STAR: Alignment Scores", "star", wStar);
+                  } 
+                };
+              };   
+            });
+              lockedS = 0;
+              lockedFC = 0; 
+              
+          });
+        }
+      };
+      
+      // using constructor MultiQCTools for general statistics page;
+      var gs = new MultiQCTools();
+      borrow = new MultiQCTools();
+      pAssigned = gs.getArray(3, "featureCounts_mqc-generalstats-percent_assigned", k);
+      mAssigned = gs.getArray(2, "featureCounts_mqc-generalstats-Assigned", k);
+      // mAssigned bar length
+      var hA = gs.getHighest(mAssigned); //end
+      pAligned = gs.getArray(1, "STAR_mqc-generalstats-uniquely_mapped_percent", k);
+      mAligned = gs.getArray(0, "STAR_mqc-generalstats-uniquely_mapped", k);
+      // mAligned bar length
+      hL = gs.getHighest(mAligned); //end
+      pDupli = gs.getArray(2, "FastQC_mqc-generalstats-percent_duplicates", k);
+      pGC = gs.getArray(4, "FastQC_mqc-generalstats-percent_gc", k);
+      bpLength = gs.getArray(1, "FastQC_mqc-generalstats-avg_sequence_length", k);
+      // bpLength bar length
+      hB = gs.getHighest(bpLength); //end
+      pFailed = gs.getArray(0, "FastQC_mqc-generalstats-percent_fails", k);
+      mSeqs = gs.getArray(3, "FastQC_mqc-generalstats-total_sequences", k);
+      hS = gs.getHighest(mSeqs);
+      
+      //constructor function to append data into div#gsrowi (only used in general statistics);
+      function AppendDiv(){
+        this.cellDiv = function(i, outArray, percent, coln, barLength, bar){
+          if(bar === undefined){
+            bar = barLength;
+          };
+          if(outArray[i] !== undefined){
+            if(outArray[i] !== 0){
+              $(`#gsrow${i}`).append(`<div class="col-sm-1 col-1 progress "><div id="${coln}${$(`#gssample${i}`).text().trim()}" class="progress-bar text-dark text-left ${coln}" style="width:${barLength}%">${bar}</div></div>`);
+              if(coln== "bL"){
+                $(`#${coln}${$(`#gssample${i}`).text().trim()}`).text(`${bar} bp`)
+              };
+              if(percent == true){
+                $(`#${coln}${$(`#gssample${i}`).text().trim()}`).text(`${bar}%`)
+              };
+              if(coln=='pA'||coln=='mA'){
+                gs.colorGrad(`${coln}${$(`#gssample${i}`).text().trim()}`, barLength, "rgba(238, 220, 170, 0.979)", "rgba(226, 204, 144, 0.979)","rgba(214, 190, 124, 0.979)", "rgba(199, 175, 109, 0.979)");
+              } else if(coln=='pL'||coln=='mL'){
+                gs.colorGrad(`${coln}${$(`#gssample${i}`).text().trim()}`, barLength, "rgba(170, 224, 238, 0.979)", "rgba(149, 223, 241, 0.945)","rgba(109, 215, 241, 0.945)", "rgba(71, 190, 219, 0.945)");
+              } else {
+                gs.colorGrad(`${coln}${$(`#gssample${i}`).text().trim()}`, barLength, "rgba(191, 250, 191, 0.945)", "rgba(139, 248, 139, 0.945)","rgba(163, 235, 163, 0.945)", "rgba(110, 223, 110, 0.945)");
+              };
+            } else {
+              $(`#gsrow${i}`).append(`<div id="${coln}${$(`#gssample${i}`).text().trim()}" class="col-sm-1 col-1 progress"><div class="progress-bar text-dark text-left" style="width:${barLength}%"> </div></div>`)
+            }; 
+          }; 
+        }
+      };
+      var add = new AppendDiv();
+      // creating the html div
+      for(var i=0; i<k.length; i++){
+        $('#generalstatistics').append(`<div id="gsrow${i}" class="row w-100 zentrum break5"><div id="gssample${i}" class="sample_title col-sm-2 col-2">${"   "}${k[i]}</div></div>`);
+        add.cellDiv(i, pAssigned, 1, "pA", Number(pAssigned[i].toFixed(2))); 
+        add.cellDiv(i, mAssigned, 0, "mA", Number((mAssigned[i]/hA*100).toFixed(2)), Number((mAssigned[i]/1e6).toFixed(2)));
+        add.cellDiv(i, pAligned, 1, "pL", Number(pAligned[i].toFixed(2)));
+        add.cellDiv(i, mAligned, 0, "mL", Number((mAligned[i]/hL*100).toFixed(2)), Number((mAligned[i]/1e6).toFixed(2)));
+        add.cellDiv(i, pDupli, 1, "pD", Number(pDupli[i].toFixed(2)));
+        add.cellDiv(i, pGC, 1, "pGC", Number(pGC[i].toFixed(2)));
+        add.cellDiv(i, bpLength, 0, "bL", Number((bpLength[i]/hB*100).toFixed(2)), Number((bpLength[i]).toFixed(2)));
+        add.cellDiv(i, pFailed, 1, "pF", Number(pFailed[i].toFixed(2)));
+        add.cellDiv(i, mSeqs, 0, "mS", Number((mSeqs[i]/hS*100).toFixed(2)), Number((mSeqs[i]/1e6).toFixed(2)));
+      };
+
+      // creating featurecounts div
+      var mainfc = mqc["report_general_stats_data"][0];
+      var snfc = Object.keys(mainfc);
+      snfc.sort();
+      cq_snfcsort = snfc;
+      chartFc = gs.chartData(snfc, mainfc, "fc"); 
+      var bgfc = ["rgb(103, 173, 201)", "rgb(92, 99, 98)", "rgb(83, 204, 154)", "rgb(200, 202, 93)"];
+      $('#btns_mqc > :nth-child(4)').on('click', function(){
+        $('#featurecounts').ready(()=>{
+          wFCounts = $('#theTable').width();
+          if($('#chartsfeaturecounts').children().length === 0){
+            gs.showBarChart('targetDiv', chartFc, bgfc, "featureCounts: Assignments", "featurecounts", wFCounts);
+          } 
+        });
+      });  
+
+      // creating star div
+      var mains = mqc["report_general_stats_data"][1];
+      var sns = Object.keys(mains);
+      sns.sort();
+      chartS = gs.chartData(sns, mains, "star");
+      var bgw = ["rgb(74, 129, 180)", "rgb(69, 84, 99)", "rgb(229, 253, 191)", "rgb(172, 173, 89)", "rgb(233, 159, 159)"];
+      // var bgw = ["#7C7C7C", "#8A95A5", "#E9D6EC", "#EACDC0", "#CFB9A5"];
+      // var bgw = ["#247BA0", "#6290C8", "#FFE066", "#F25F5C", "#50514F"];
+      // var bgw = ["#A4BFEB", "#6290C8", "#A4A8D1", "#BBA0B2", "#9D858D"];
+      // var bgw = ["#046E8F", "#F78764", "#F4D35E", "#DA4167", "#EBEBD3"]
+      $('#btns_mqc > :nth-child(3)').on('click', function(){
+        $('#star').ready(()=>{
+          wStar = $('#theTable').width();
+          if($('#chartsstar').children().length === 0){
+            gs.showBarChart('targetStar', chartS, bgw, "STAR: Alignment Scores", "star", wStar);
+          }; 
+        })
+      });
+
+      // fixing responsiveness upon resizing on featurecounts and star page by setting its parent div width;
+      $(window).resize(()=>{
+        if($('#featurecounts').hasClass('d-flex') && $('#multiqc').hasClass('d-flex')){
+          wFCounts = $('#theTable').width(); 
+          // gs.showBarChart('targetDiv', chartFc, bgf, "featureCounts: Assignments", "featurecounts", wFCounts);
+          // console.log(`resizedd`)
+        }; 
+        if($('#star').hasClass('d-flex') && $('#multiqc').hasClass('d-flex')){
+          wStar = $('#theTable').width(); 
+          // gs.showBarChart('targetStar', chartS, bgw, "STAR: Alignment Scores", "star", wStar);
+          // console.log('resizeddd')
+        }; 
+      }); 
+
+      // creating fastqc
+
+      // tagging the data into ready-to-use variable from multiqc files;
+      mqcc = data[2];
+      fqc1 = mqcc["report_plot_data"]["fastqc_per_base_sequence_quality_plot"]["datasets"][0];
+      fqc2 = mqcc["report_plot_data"]["fastqc_per_sequence_quality_scores_plot"]["datasets"][0];
+      fqc3 = mqcc["report_plot_data"]["fastqc_per_sequence_gc_content_plot"]["datasets"][0];
+      fqc3b = mqcc["report_plot_data"]["fastqc_per_sequence_gc_content_plot"]["datasets"][1];
+      fqc4 = mqcc["report_plot_data"]["fastqc_per_base_n_content_plot"]["datasets"][0];
+      fqc6 = mqcc["report_plot_data"]["fastqc_sequence_duplication_levels_plot"]["datasets"][0];
+      fqc7 = mqcc["report_plot_data"]["fastqc_adapter_content_plot"]["datasets"][0];
+
+      // function to rank array of data (used in fastqc only);
+      rankThis=(arrayInput, sortedTrue)=>{ 
+        var tempArr = [];
+        var tempRf = [];
+        for(var t in arrayInput){
+          tempRf.push(arrayInput[t]);
+          tempArr.push(arrayInput[t]);
+        };
+        // cq_tempRf = tempRf;
+        // cq_tA0 = tempArray;
+        // cq_tR0 = tempRef; 
+        tempArr.sort(
+            (a, b)=>{return b-a}
+        ); 
+        // cq_tA = tempArr;
+        // cq_tR = tempRf;
+        if(arrayInput.length !== cq_snfcprime.length){
+          for(var c in cq_snfcprime.slice(arrayInput.length)){
+            tempArr.push('undefined');
+            tempRf.push('undefined');
+          }
+        };
+        // cq_tA1 = tempArr;
+        // cq_tR1 = tempRf;
+        var tempRank = [];
+        for(var o of tempArr){
+          tempIndex = tempRf.findIndex(n => {return n == o});
+          tempRank.push(tempIndex);
+          tempRf[tempIndex] = tempRf[tempIndex] + 'x';
+        };
+        var toReturn = {};
+        toReturn[0] = tempRank;
+        toReturn[1] = tempArr;
+        return toReturn;
+      };
+      // constructor function to plot fastqc graphs (used in fastqc only);
+      function PlotFQC(){
+        this.lineChart = (fqc1, refX, refY, yDom, body, labelxy)=>{
+          // preparing data into ready-to-use variable
+          fqc = {
+            sqhName: [],
+            sqhData: []
+          }; 
+          for(var f=0; f<fqc1.length; f++){
+            fqc['sqhName'].push(fqc1[f]['name'][0]);
+            fqc['sqhData'].push(fqc1[f]['data']);
+          }; 
+
+          // step1 = 'set up margins and size references';
+          var mar = {
+              top: 75,
+              right: 50,
+              bottom: 50,
+              left: 70
+          }; 
+          var xRef = refX,
+          yRef = refY; 
+          var width = xRef - mar.left - mar.right, height = yRef - mar.top - mar.bottom;
+
+          // step2 = 'deploy the data';
+          d0 = fqc['sqhData']; 
+          dataX = []; dataY = []; dt = [];
+          if(body == '#section3' || body == '#section7'){
+            domains = [];
+          };
+          subvalues = {};
+          for(var g=0; g<d0.length; g++){
+            dataX[g] = [];
+            dataY[g] = [];
+            dt[g] = [];   
+            for(var f=0; f<d0[g].length; f++){
+              var tempY = [];
+              var tempY1 = [];
+              if(subvalues[`${f}`] == undefined){
+                subvalues[`${f}`] = [];
+              };
+              if(body !== '#section6'){
+                dataX[g].push(d0[g][f][0][0]);
+                dataY[g].push(d0[g][f][1][0]);
+                var values={};
+                values[`x`] = dataX[g][f];
+                values[`y`] = dataY[g][f];
+                values[`z`] = g;
+                subvalues[`${f}`].push(dataY[g][f]);
+                values[`v`] = subvalues[`${f}`];
+                for(var h=0; h<d0.length; h++){
+                  tempY1.push(d0[h][10][1][0]);  
+                }
+                dt[g].push(values);
+              }else{
+                dataX[g].push(d0[g][f][1]);
+                dataY[g].push(d0[g][f][0]);
+                var values={};
+                values[`x`] = dataX[g][f];
+                values[`y`] = dataY[g][f];
+                values[`z`] = g;
+                subvalues[`${f}`].push(dataY[g][f]);
+                values[`v`] = subvalues[`${f}`];          
+                dt[g].push(values);
+              };
+              if(body == '#section3' || body == '#section7'){ 
+                domains.push(dataY[g][f]); 
+              };   
+            }; 
+          };  
+          if(body== '#section3' || body == '#section7'){ 
+            yDom = borrow.getHighest(domains); 
+          };
+          
+          // pre Step 3: customizing horizontal scales for id section6
+          xDom=()=>{
+            if(body !== '#section6'){
+              return Math.max(...dataX[0])
+            } else {
+              return 16;
+            }
+          }
+          // step 3: prepare scales 
+          var xScale = d3.scaleLinear()
+            .domain([0, xDom()])
+            .range([0, width]); 
+          var yScale = d3.scaleLinear()
+            .domain([0, yDom])
+            .range([height, 0]); 
+          var xOrd = d3.scaleOrdinal()
+            .domain([0, 10])
+            .range(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']);
+              
+          // pre Step 4
+          whichCurve=()=>{
+            if(body !== '#section6'){
+              return d3.curveMonotoneX;
+            } else {
+              return d3.curveLinear;
+            };
+          };
+          // step 4: set up line generator 
+          var line = d3.line()
+            .x((d,i)=>{ 
+              if(body !== '#section6'){
+                return xScale(d.x);
+              }else{
+                return xScale(i);
+              }
+            })
+            .y(d=>{ return yScale(d.y); })
+            .curve(whichCurve());
+            // .curve(d3.curveMonotoneX);
+            
+          // step 5: create main canvas
+          var c = d3.select(`${body}`).append('svg')
+              .attr('width', width + mar.left + mar.right)
+              .attr('height', height + mar.top + mar.bottom)
+            .append('g') 
+              .attr('transform', `translate(${mar.left}, ${mar.top})`);
+
+          // pre step 6: preparing array of title strings;
+          var fqcTitle = [
+            'Sequence Quality Histogram', 
+            'Per Sequence Quality Scores', 
+            'Per Sequence GC Content', 
+            'Per Base N Content',
+            'Sequence Length Distribution',
+            'Sequence Duplication Levels',
+            'Adapter Content'
+          ];
+          c.append('text')
+            .attr('class', 'fqcTitle')
+            .text(`${fqcTitle[+body[body.length-1] - 1]}`)
+            .attr('transform', `translate(-20, -${35})`);
+
+          // step 6: adhere the axis
+          if(body !== '#section6'){
+            c.append('g')
+              .attr('id', `xax${body.substring(body.length-1)}`)
+              .attr('class', 'x axis')
+              .attr('transform', `translate(0, ${height})`)
+              .call(d3.axisBottom(xScale));
+          }else{
+            c.append('g')
+              .attr('id', `xax${body.substring(body.length-1)}`)
+              .attr('class', 'x axis tick6')
+              .attr('transform', `translate(0, ${height})`)
+              .call(d3.axisBottom(xScale).ticks(16));
+          };
+          // customizing horizontal axis ticks for id section6
+          if(body === '#section6'){
+            d3.select('.tick6').selectAll('g')
+              .select('text')
+              .attr('transform', `translate(-${xScale(0.5)}, 0)`);
+            d3.select('.tick6').selectAll('g')
+              .select('text').text((d,i)=>{
+                var scaleTag = $(`.tick6 g:nth-child(${i+2})`).text();
+                var stringTag = ['>10', '>50', '>100', '>500', '>1k', '>5k', '>10k+'];
+                if(i === 0){
+                  return '';
+                } else if (i < 10){
+                  return scaleTag;
+                } else if (i >= 10){
+                  return stringTag[i-10];
+                };
+              })
+              .attr('class', (d,i) => {return `check${i}`;})
+          };  
+          c.append('g')
+            .attr('id', `yax${body.substring(body.length-1)}`)
+            .attr('class', 'y axis')
+            .call(d3.axisLeft(yScale));
+          var labelHor = d3.select(`#xax${body.substring(body.length-1)}`).append('g')
+            .append('text')
+            .text(`${labelxy[0]}`)
+            .attr('x', width/2)
+            .attr('y', 35)
+            .attr('fill', 'black')
+            .attr('font-size', '15'); 
+          var labelVer = d3.select(`#yax${body.substring(body.length-1)}`).append('g')
+            .append('text')
+            .text(`${labelxy[1]}`)
+            .attr('x', -height/2)
+            .attr('y',-56)
+            .attr('fill', 'black')
+            .attr('font-size', '15')
+            .attr('transform', 'rotate(-90)'); 
+          for(var g=0; g<dt.length; g++){
+            // step 7: append path
+            if(body !== '#section6'){
+              c.append('path')
+                .datum(dt[g])
+                .attr('class', 'line')
+                .attr('id', `line${g}_${body[body.length-1]}`)
+                .attr('d', line);
+
+              c.selectAll(`.dot${g}`)
+                .data(dt[g])
+                .enter().append('circle')
+                  .attr('class', `dot${g}`)
+                  .attr('id', (d, i)=>{return `${g}id${d.y}${i}`})
+                  .attr('class', 'dots')
+                  .attr('cx', (d, i)=>{return xScale(d.x)})
+                  .attr('cy', d=>{return yScale(d.y);})
+                  .attr('r', 5.6) 
+                .on('mouseover', function(d, i){
+                  var tempRect = c.append('g')
+                    .attr('id', `tempG${(d.y + "s").replace(/\./g, '')}`);
+                  tempRect.append('rect')
+                    .attr('id', `infoBox${(d.y + "s").replace(/\./g, '')}`)
+                    .style('width', `${`${0+1}. ${cq_snfcprime[0]}    (${d.x}, ${d.y})`.length * 7}`)
+                    .style('height', `${20.5*g}`)
+                    .style('fill', '#868e96')
+                    .style('fill-opacity', '0.7')
+                    .attr('class', 'infoBox')
+                    .attr('x', ()=>{return xScale(13)-30})
+                    .attr('y', ()=>{return height*0.03})
+                    .attr('rx', '3')
+                    .attr('ry', '3'); 
+                  for(var t=0; t<dt.length; t++){
+                    tempRect.append("text")
+                      .attr('id', `t${g}-${(d.y + "s").replace(/\./g, '')}-${i}-${t}`)
+                      .attr('class', `selectText${t}`)
+                      .attr('class', 'firstText')
+                      .attr('fill', '#f8f9fa')
+                      .attr('font-weight', 'bold')
+                      .attr('x', ()=>{return xScale(13)-30+5})
+                      .attr('y',  ()=>{return  height*0.0625+(t*20)})
+                      .attr('font-size', '12')
+                      .text(function() {
+                      tempIndex = rankThis(d.v); 
+                      dvUn = d.v;
+                      return `${t+1}. ${cq_snfcprime[tempIndex[0][t]]}    (${d.x}, ${(function(a){ if(a!== 'undefined'){return +a.toFixed(3)} else { return a }})(tempIndex[1][t])})`;
+                      });
+                  }; 
+                  d3.select(`#line${d.z}_${body[body.length-1]}`)
+                    .style('stroke-width', '2')
+                    .style('stroke', '#292b2c');
+                  d3.select(`#t${g}-${(d.y + "s").replace(/\./g, '')}-${i}-${rankThis(d.v)[0].findIndex( x => {return x == d.z} )}`)
+                    .attr('fill', '#292b2c')
+                    .attr('font-weight', 'bold'); 
+                })
+                .on('mouseout', function(d, i){
+                  d3.select(`#t${g}-${(d.y + "s").replace(/\./g, '')}-${i}-${rankThis(d.v)[0].findIndex( x => {return x == d.z} )}`)
+                    .attr('fill', '#868e96');
+                  d3.select(`#t${g}-${(d.y + "s").replace(/\./g, '')}-${i}-${d.z}`).remove();  // Remove text location
+                  d3.select(`#infoBox${(d.y + "s").replace(/\./g, '')}`).remove();
+                  d3.select(`#tempG${(d.y + "s").replace(/\./g, '')}`).remove();
+                  d3.select(`#line${d.z}_${body[body.length-1]}`)
+                    .style('stroke-width', '1')
+                    .style('stroke', '#00cc89');
+                });  
+            }else{
+              // cusstomizing path line for id section6
+              c.append('path')
+                .datum(dt[g])
+                .attr('class', 'line')
+                .attr('id', `line${g}_${body[body.length-1]}`)
+                .attr('d', line)
+                .attr('transform', `translate(${xScale(0.5)}, 0)`); 
+              
+              c.selectAll(`.dot${g}`)
+                .data(dt[g])
+                .enter().append('circle')
+                  .attr('class', `dot${g}`)
+                  .attr('id', (d, i)=>{return `${g}id${d.y}${i}`})
+                  .attr('class', 'dots')
+                  .attr('cx', (d, i)=>{return xScale(i+0.5)})
+                  .attr('cy', d=>{return yScale(d.y);})
+                  .attr('r', 5.6) 
+                .on('mouseover', function(d, i){
+                  var tempRect = c.append('g')
+                    .attr('id', `tempG${(d.y + "s").replace(/\./g, '')}`);
+                  tempRect.append('rect')
+                    .attr('id', `infoBox${(d.y + "s").replace(/\./g, '')}`)
+                    .style('width', `${`${0+1}. ${cq_snfcprime[0]}    (${d.x}, ${d.y})`.length * 7}`)
+                    .style('height', `${20.5*g}`)
+                    .style('fill', '#868e96')
+                    .style('fill-opacity', '0.7')
+                    .attr('class', 'infoBox')
+                    .attr('x', ()=>{return xScale(13)-30})
+                    .attr('y', ()=>{return height*0.03})
+                    .attr('rx', '3')
+                    .attr('ry', '3'); 
+                  for(var t=0; t<dt.length; t++){
+                    tempRect.append("text")
+                    .attr('id', `t${g}-${(d.y + "s").replace(/\./g, '')}-${i}-${t}`)
+                    .attr('class', `selectText${t}`)
+                    .attr('class', 'firstText')
+                    .attr('fill', '#f8f9fa')
+                    .attr('x', ()=>{return xScale(13)-30+5})
+                    .attr('y',  ()=>{return  height*0.0625+(t*20)})
+                    .attr('font-size', '12')
+                    .text(function() {
+                      s6 = d.v;
+                      tempIndex = rankThis(d.v); 
+                      dvUn = d.v;
+                      var stringTag = ['>10', '>50', '>100', '>500', '>1k', '>5k', '>10k+'];
+                      if(i === 0){
+                        return `${t+1}. ${cq_snfcprime[tempIndex[0][t]]}    (${i+1},  ${(function(a){if(a!== 'undefined'){return +a.toFixed(3)} else { return a }})(tempIndex[1][t])})`;
+                      } else if (i < 9){
+                        return `${t+1}. ${cq_snfcprime[tempIndex[0][t]]}    (${i+1},  ${(function(a){if(a!== 'undefined'){return +a.toFixed(3)} else { return a }})(tempIndex[1][t])})`;
+                      } else if (i >= 9){
+                        return `${t+1}. ${cq_snfcprime[tempIndex[0][t]]}    ('${stringTag[i-9]}',  ${(function(a){if(a!== 'undefined'){return +a.toFixed(3)} else { return a }})(tempIndex[1][t])})`;
+                      };
+                      // return `${t+1}. ${cq_snfcprime[tempIndex[0][t]]}    (${d.x}, ${tempIndex[1][t]})`;
+                    });
+                  }; 
+                  d3.select(`#line${d.z}_${body[body.length-1]}`)
+                  .style('stroke-width', '2')
+                  .style('stroke', '#292b2c');
+                  d3.select(`#t${g}-${(d.y + "s").replace(/\./g, '')}-${i}-${rankThis(d.v)[0].findIndex( x => {return x == d.z} )}`)
+                    .attr('fill', '#292b2c'); 
+                })
+                .on('mouseout', function(d, i){
+                  d3.select(`#t${g}-${(d.y + "s").replace(/\./g, '')}-${i}-${rankThis(d.v)[0].findIndex( x => {return x == d.z} )}`)
+                    .attr('fill', '#868e96');
+                  d3.select(`#t${g}-${(d.y + "s").replace(/\./g, '')}-${i}-${d.z}`).remove();  // Remove text location
+                  d3.select(`#infoBox${(d.y + "s").replace(/\./g, '')}`).remove();
+                  d3.select(`#tempG${(d.y + "s").replace(/\./g, '')}`).remove();
+                  d3.select(`#line${d.z}_${body[body.length-1]}`)
+                    .style('stroke-width', '1')
+                    .style('stroke', '#00cc89');
+                }); 
+            };        
+          };  
+
+          // step 9: pimping CSS
+          d3.selectAll('.line')
+            .style('fill', 'none')
+            .style('stroke', '#00cc89')
+            .style('stroke-width', '1');
+          
+          d3.selectAll('.overlay')
+            .style('fill', 'none')
+            .style('pointer-events', 'all');
+          
+          d3.selectAll('.dots')
+            .style('fill', '#292b2c')
+            .style('fill-opacity', '0')
+            .style('stroke', 'none');
+          
+          d3.selectAll('.focus')
+            .style('fill', 'none')
+            .style('stroke', 'steelblue');
+          
+          d3.selectAll('.fqcTitle')
+            .style('font-size', '30px');
+          
+          d3.selectAll('.nav-item')
+            .selectAll('a')
+            .style('font-size', '12px'); 
+
+          d3.selectAll('.navitem')
+            .selectAll('a')
+            .style('font-size', '12px');  
+        }
+      };
+
+      var plotfqc = new PlotFQC; 
+      // plotting fastqc graphs upon clicking fastqc button
+      $('#btns_mqc > :nth-child(2)').on('click', function(){
+        $('#fastqc').ready(()=>{
+          // section1 = 'Sequence Quality Histograms';
+          wSection1 = $('#section1').width();
+          hSection1 = $('#section1').height();
+          label1 = ['Position (bp)', 'Phred Score'];
+          if($('#section1').children().length === 0){
+            plotfqc.lineChart(fqc1, wSection1, hSection1, 45,'#section1', label1);
+          }; 
+          // section2 = 'Per Sequence Quality Scores';
+          wSection2 = $('#section2').width();
+          hSection2 = $('#section2').height();
+          label2 = ['Mean Sequence Quality (Phred Score)', 'Count'];
+          if($('#section2').children().length === 0){
+            plotfqc.lineChart(fqc2, wSection2, hSection2, 14e6,'#section2', label2);
+          }; 
+          // section3 = 'Per Sequence GC Content';
+          wSection3 = $('#section3').width();
+          hSection3 = $('#section3').height(); 
+          label3 = ['% GC', 'percentage'];
+          if($('#section3').children().length === 0){
+            plotfqc.lineChart(fqc3, wSection3, hSection3, 5,'#section3', label3);
+          }; 
+          // section4 = 'Per base N Content';
+          wSection4 = $('#section4').width();
+          hSection4 = $('#section4').height(); 
+          label4 = ['Position in Read (bp)', 'Percentage N-Count'];
+          if($('#section4').children().length === 0){
+            plotfqc.lineChart(fqc4, wSection4, hSection4, 6,'#section4', label4);
+          }; 
+          // section6 = 'Per base N Content';
+          wSection6 = $('#section6').width();
+          hSection6 = $('#section6').height();
+          label6 = ['Sequence Duplication Level', '% of Library'];
+          // console.log({wSection6});
+          if($('#section6').children().length === 0){
+            plotfqc.lineChart(fqc6, wSection6, hSection6, 100,'#section6', label6);
+          }; 
+          // section7 = 'Per base N Content';
+          wSection7 = $('#section7').width();
+          hSection7 = $('#section7').height(); 
+          label7 = ['Position (bp)', '% of Sequences'];
+          if($('#section7').children().length === 0){
+            plotfqc.lineChart(fqc7, wSection7, hSection7, 8,'#section7', label7);
+          };  
+        });
+      });
+
+      // fixing fastqc graphs responsiveness upon resizing;
+      $(window).resize(function(){
+        // setting condition so the page only responds to resizing only when on display, otherwise jquery will not capture the actual width and height;
+        if($('#fastqc').hasClass('d-flex') && $('#multiqc').hasClass('d-flex')){
+          //  fastqc resize section 1
+          wSection1 = $('#section1').width();
+          hSection1 = $('#section1').height(); 
+          $('#section1').empty();
+          if($('#section1').children().length === 0){
+            plotfqc.lineChart(fqc1, wSection1, hSection1, 45,'#section1', label1);
+          }; 
+          //  fastqc resize section 2
+          wSection2 = $('#section2').width();
+          hSection2 = $('#section2').height(); 
+          $('#section2').empty();
+          if($('#section2').children().length === 0){
+            plotfqc.lineChart(fqc2, wSection2, hSection2, 14e6,'#section2', label2);
+          };  
+          //  fastqc resize section 3
+          wSection3 = $('#section3').width();
+          hSection3 = $('#section3').height(); 
+          $('#section3').empty();
+          if(s3TogStatus){
+            if($('#section3').children().length === 0){
+            plotfqc.lineChart(fqc3b, wSection3, hSection3, 5,'#section3', label3);
+            }; 
+          }else{
+            if($('#section3').children().length === 0){
+            plotfqc.lineChart(fqc3, wSection3, hSection3, 5,'#section3', label3);
+            }; 
+          } 
+          //  fastqc resize section 4
+          wSection4 = $('#section4').width();
+          hSection4 = $('#section4').height(); 
+          $('#section4').empty();
+          if($('#section4').children().length === 0){
+            plotfqc.lineChart(fqc4, wSection4, hSection4, 6,'#section4', label3);
+          }; 
+          //  fastqc resize section 6
+          wSection6 = $('#section6').width();
+          hSection6 = $('#section6').height();
+          // console.log({wSection6});
+          $('#section6').empty();
+          if($('#section6').children().length === 0){
+            plotfqc.lineChart(fqc6, wSection6, hSection6, 100,'#section6', label6);
+          };
+          //  fastqc resize section 7
+          wSection7 = $('#section7').width();
+          hSection7 = $('#section7').height(); 
+          $('#section7').empty();
+          if($('#section7').children().length === 0){
+            plotfqc.lineChart(fqc7, wSection7, hSection7, 8,'#section7', label7);
+          }; 
+        }; 
+      });
+        
+      // toggle data %-counts on section3;
+      s3TogStatus = 0;
+      $('#section3p').on('click', ()=>{
+        s3TogStatus = 0;
+        wSection3 = $('#section3').width();
+        hSection3 = $('#section3').height(); 
+        label3 = ['% GC', 'percentage'];
+        $('#section3').html('');
+        if($('#section3').children().length === 0){
+          plotfqc.lineChart(fqc3, wSection3, hSection3, 5,'#section3', label3);
+        }; 
+      });
+      $('#section3c').on('click', ()=>{
+        wSection3 = $('#section3').width();
+        hSection3 = $('#section3').height(); 
+        label3 = ['% GC', 'percentage'];
+        $('#section3').html('');
+        if($('#section3').children().length === 0){
+          plotfqc.lineChart(fqc3b, wSection3, hSection3, 5,'#section3', label3);
+        }; 
+        s3TogStatus = 1;
+      });
+    }); 
+  </script>
+  <!-- script for pca -->
+  <script>
+    // show page function
+    function showPage(page_id){
+      $("#content > div[class='tablediv']").hide();
+      if (page_id==null && $("#content > div[class='tablediv']").length > 0) {
+          $($("#content > div[class='tablediv']")[0]).show();
+      }
+      else {
+          $("#" + page_id).show();
+      }				
+      // fix for non-interactive network view after hiding
+      if (page_id == "network" && network_view !== undefined) {
+          network_view.resize();
+      }
+    };   
+    
+    // function to plot pca (used in pca sections only);
+    function plotPCA(){   
+      xaxis = $("#pca_xaxis").val();
+      yaxis = $("#pca_yaxis").val();
+      colourby = $("#pca_colourby").val();
+      if(typeof(data[1]["pca_components"][xaxis][0][0])==="number"){
+        xdata = data[1]["pca_components"][xaxis].map((xs)=>{return xs[0]});
+        ydata = data[1]["pca_components"][yaxis].map((ys)=>{return ys[0]});
+        cdata = data[1]["pca_components"][colourby].map((cb)=>{return cb[0]});
+      }else{
+        xdata = data["pca_components"][xaxis];
+        ydata = data["pca_components"][yaxis];
+        cdata = data["pca_components"][colourby];
+      };
+      numflag = 0;
+      for (var i = 0; i < cdata.length; i++){
+        if(!isNaN(cdata[i])){
+          if(!(cdata[i] == null)){
+            numflag = 1;	
+          }
+        }
+      };
+      if (numflag){		//numerical data  
+        trace1 = {
+            x: xdata,
+            y: ydata,
+            mode: 'markers',
+              type: 'scatter',
+              text: cdata,
+              name: colourby,
+              marker: {
+                  size: 20,
+                  color: cdata,
+                  colorbar: {
+                      title: colourby,
+                      textsize: 12,
+                      thickness: 25,
+                  }
+              }
+        }
+        var legend = false;
+      }else{		//categorical data				
+        trace1 = {
+          x: xdata,
+          y: ydata,
+          mode: 'markers',
+          type: 'scatter',
+          text: cdata,
+          marker: {size: 20},
+          transforms: [{type: "groupby", groups: cdata}]
+        }
+        var legend = true;
+      };  
+      $("#pca_view").css("border", "1px solid #CCCCCC");
+      Plotly.newPlot('pca_view', [trace1], {
+          xaxis: {title: xaxis},
+          yaxis: {title: yaxis},
+          width: $(window).width()-200,
+          height: $(window).height()-200,
+          showlegend: legend,
+          hovermode: "closest",
+      });
+    }; 
+    // document ready
+    var network_view, graphs, edges, nodes, gdata;
+    $(document).ready(function() {
+      window.sheetNames = {}; 
+      var html;
+      if (data[1].hasOwnProperty("pca_components")) {
+        var pca_comp = [];
+        for (var i in data[1]["pca_components"]){
+          if (!(i.startsWith("PC"))){
+            if (! (new Set(data[1]["pca_components"][i]).size <= 1)){
+              pca_comp.push(i);
+            }
+          }
+        };
+      html = "<div id='pca' class='tablediv' style='padding-left:0px; margin-top: 50px;'><h1>Principal Component Analysis</h1>";
+      html += "<div style='background-color: #CCCCCC; padding: 5px; float: right; height: 20px; margin-bottom: 10px;'  class='d-flex flex-row align-items-center'> x-axis: <select id='pca_xaxis' onchange='plotPCA();'>";
+      for (var i = 0; i < data[1]["pca_variance"]["pc"].length; i++) {
+          html += "<option>" + "PC" + data[1]["pca_variance"]["pc"][i] + "</option>";
+      }
+          html += "</select> y-axis: <select id='pca_yaxis' onchange='plotPCA();'>";
+      for (var i = 0; i < data[1]["pca_variance"]["pc"].length; i++) {
+          html += "<option>" + "PC" + data[1]["pca_variance"]["pc"][i] + "</option>";
+      }
+      html += "</select> | Colour by: <select id='pca_colourby' onchange='plotPCA();'>";
+      for (var i = 0; i < pca_comp.length; i++) {
+          html += "<option>" + pca_comp[i] + "</option>";
+      }
+      html += "</select></div><div id='pca_view' style='clear: both;'></div></div>";
+      $("#content").append(html);
+      $("#pca_xaxis").val("PC1");
+      $("#pca_yaxis").val("PC2");
+      $("#pca_colourby").val(pca_comp[0]);
+      $("#pcaplotbtn").click(()=>{
+        xaxis = $("#pca_xaxis").val();
+        yaxis = $("#pca_yaxis").val();
+        colourby = $("#pca_colourby").val();
+        if(typeof(data[1]["pca_components"][xaxis][0][0])==="number"){
+          xdata = data[1]["pca_components"][xaxis].map((xs)=>{return xs[0]});
+          ydata = data[1]["pca_components"][yaxis].map((ys)=>{return ys[0]});
+          cdata = data[1]["pca_components"][colourby].map((cb)=>{return cb[0]});
+        }else{
+          xdata = data["pca_components"][xaxis];
+          ydata = data["pca_components"][yaxis];
+          cdata = data["pca_components"][colourby];
+        };
+        numflag = 0;
+        for (var i = 0; i < cdata.length; i++){
+          if(!isNaN(cdata[i])){
+            if(!(cdata[i] == null)){
+              numflag = 1;	
+            }
+          }
+        };
+        if (numflag){		//numerical data  
+          trace1 = {
+            x: xdata,
+            y: ydata,
+            mode: 'markers',
+              type: 'scatter',
+              text: cdata,
+              name: colourby,
+              marker: {
+                  size: 20,
+                  color: cdata,
+                  colorbar: {
+                      title: colourby,
+                      textsize: 12,
+                      thickness: 25,
+                  }
+              }
+          }
+          var legend = false;
+        }else{						//categorical data				
+          trace1 = {
+            x: xdata,
+            y: ydata,
+            mode: 'markers',
+              type: 'scatter',
+              text: cdata,
+              marker: {size: 20},
+              transforms: [{type: "groupby", groups: cdata}]
+          }
+          var legend = true;
+        }; 
+        $("#pca_view").css("border", "1px solid #CCCCCC");
+        Plotly.newPlot('pca_view', [trace1], {
+            xaxis: {title: xaxis},
+            yaxis: {title: yaxis},
+            width: $(window).width()-200,
+            height: $(window).height()-200,
+            showlegend: legend,
+            hovermode: "closest",
+        });  
+        });
+                showPage(null);
+            }
+    });    
+  </script>
+  <!-- deg analysis -->
+  <script>
+  $(document).ready(()=>{
+    // page transition used only in deg analysis page;
+    returnPgDgea = (theId)=>{
+      console.log({theId})
+      if(theId===null){
+          console.log("theId is null")
+          returnPgDgea('dgeaSummary');
+      } else if(theId==undefined){
+          console.log("theId is undefined");
+          returnPgDgea('dgeaSummary');
+      } else {
+        if($(`#${theId}`).hasClass("d-none") || !$(`#dgeaSummary`).hasClass("d-none")){
+        $(`#${theId}`).removeClass("d-none");
+        $(`#${theId}`).addClass("dflex  justify-content-center align-items-center");
+        $(`#${theId}`).siblings().not(`#theContent > p`).removeClass("dflex").addClass("d-none");
+          
+        }; 
+        if($(`#dgeaSummary`).hasClass("dflex")){
+            $(`#dgeaSummary`).removeClass("dflex");
+        };
+        if($(`#fastqc`).hasClass('flex-column') && $(`#fastqc`).hasClass('justify-content-center') ){
+          $(`#fastqc`).removeClass('justify-content-center');
+        }
+      }
+    };
+
+    $('#deganalysis').append('<div id="dialogdownload"></div>');
+    $("#dialogdownload").hide();
+    
+    // function to download table into excel file;
+    downloadXlsx = (sheetNames)=>{ 
+      alert('The download may take a while.')
+      $("#dialogdownload").show()
+      window.table = new Tabulator("#dialog");
+      $("#dialogdownload").hide();
+      var sheets = sheetNames;
+      table.download("xlsx", "DEG_Analysis.xlsx", {sheets:sheets});  
+    }
+    
+    window.tableComp = {};
+    $('#dgeaTable').css('margin', '20px');
+        //data7 = data[6];
+        //for(var obj of data7 ) {
+        //  obj['PValue'] = +obj['PValue'];
+        //  obj['FDR'] = +obj['FDR'];
+        //  obj['LR'] = +obj['LR'];
+        //};
+
+    d_dgea = data[6]; 
+    pmeter = new Set();
+    parameter = new Set();
+    pr1 = new Set();
+    pr2 = new Set();
+    pr3 = new Set();
+    for(var d = 0; d<d_dgea.length; d++){
+      if(d_dgea[d].hasOwnProperty('comparison')){
+        pmeter.add(d_dgea[d].comparison.replace(/ /g, ''));
+        parameter.add(d_dgea[d].parameter.replace(/ /g, ''));
+        pr1.add(`${d_dgea[d].comparison.replace(/ /g, '')}${d_dgea[d].parameter}`)   
+      };
+    };
+    pmeters = [...pmeter]; //getting parameters from comparison
+    parameters = [...parameter]; //getting parameter from parameter
+    pmeterCheck = [...pr1] // this to prevent the inclusion parameters with same comparisons;
+    checkpoint = []; 
+    tableSummaryDgea = data[4];
+    tableDataDgea = {};
+    finalDataDgea = {};  
+
+    for(var e=0; e<pmeterCheck.length; e++){ 
+      finalDataDgea[`comparison${e}`] = [];
+      for(var d=0; d<d_dgea.length; d++){ 
+        // only data whose matched for both sides in pmeter check that gets pushed to finalDataDgea;
+        if(d_dgea[d].comparison.replace(/ /g, '')===pmeterCheck[e].slice(0, d_dgea[d].comparison.replace(/ /g, '').length) && d_dgea[d].parameter.replace(/ /g, '') === pmeterCheck[e].slice(d_dgea[d].comparison.replace(/ /g, '').length, pmeterCheck[e].length)){  
+          d_dgea[d]['gene_length'] = d_dgea[d]['length'];
+          delete d_dgea[d]['length'];
+          finalDataDgea[`comparison${e}`].push(d_dgea[d]);
+        };
+      };
+    };
+
+    $('#deganalysis').css('padding', '25px');
+    $('#dgeaTable').css('width', '100%');
+
+    onceComparison = {}; 
+    function plotBox(x, y, row, gd){
+      console.log({
+        x,
+        y,
+        row
+      });
+      var pdata = {};
+      pdata[`${x}`] = {
+        y: Object.values(row[0]),
+        type: 'box',
+        boxpoints: 'all',
+        jitter: 0.2,
+        name: x
+      };
+      pdata[`${y}`] = {
+        y: Object.values(row[1]),
+        type: 'box',
+        boxpoints: 'all',
+        jitter: 0.2,
+        name: y
+      };
+      // console.log({pdata});
+      // dialog div for interactive plot; 
+      $('#dialog2').html(`
+      <p style='font-size: 14px; font-weight: bold;'> DEG Analysis for ${x} vs ${y}<br/>(P=${gd['PValue']}, FDR=${gd['FDR']}, n=${Object.keys(row[0]).length + Object.keys(row[1]).length})</p><div id='myplot'></div>
+      `);
+      Plotly.newPlot('myplot', Object.keys(pdata).map(function(x) {return pdata[x]}), {
+        width: $(window).width()-75,
+        xaxis: {title: {text: y}},
+        yaxis: {title: {text: x}}
+      });
+      $("#dialog2").dialog({
+        autoOpen: true,
+        modal: true,
+        height: $(window).height()-50,
+        width: $(window).width()-50,
+      }); 
+    };
+
+    window.comparison_tables = {};
+    // declaring seperate tabulator variables for download;
+    window.degSheetNames = {};
+
+    for(var b=0; b<pmeterCheck.length; b++){
+      onceComparison[`oc${b+1}`] = 0;
+      $('#dropdown_dgea').append(`
+      <span id="comparison${b+1}" class="dropdown-item" href="#" > Comparison ${b+1} </span>
+      `);
+      $('#container_dgea').append(`
+        <div id="dgeaComparison${b+1}" class="w-100 h-100 d-none ">Comparison${b+1}</div>
+      `);
+      $('#searchGeneName').append(`<input id='geneBox${b+1}' type='text' class='d-none'></input>`);
+      window.table_summary = new Tabulator('#dgeaSummary', { 
+        pagination: "local",
+        paginationSize: 33,
+        data: tableSummaryDgea,
+        columns: [
+            {title: 'parameter', field: 'parameter'},
+            {title: 'comparison', field: 'comparison'}, 
+            {title: 'tests', field: 'tests'},
+            {title: 'nominal_degs', field: 'nominal_degs'},
+            {title: 'corrected_degs', field: 'corrected_degs'},
+            {title: 'group1', field: 'group1'},
+            {title: 'group2', field: 'group2'}
+        ], 
+      }); 
+
+      degSheetNames['Summary'] = table_summary;
+      $('#dgeaSummary').html(''); //declaring table summary in advance to be stared in degSheetNames variable for download;
+      $('#btns_dgea button:nth-child(1)').on('click', ()=>{
+        $('#searchGeneName').removeClass('d-flex').addClass('d-none')
+        if(!once){ 
+          window.table_summary = new Tabulator('#dgeaSummary', { 
+          pagination: "local",
+          paginationSize: 33,
+          data: tableSummaryDgea,
+          columns: [
+            {title: 'parameter', field: 'parameter'},
+            {title: 'comparison', field: 'comparison'}, 
+            {title: 'tests', field: 'tests'},
+            {title: 'nominal_degs', field: 'nominal_degs'},
+            {title: 'corrected_degs', field: 'corrected_degs'},
+            {title: 'group1', field: 'group1'},
+            {title: 'group2', field: 'group2'}
+          ], 
+          });
+          degSheetNames['Summary'] = table_summary; 
+        };
+        once = 1; //makes sure so the summary gets declared once since the first main page loading;
+        returnPgDgea('dgeaSummary');
+      });
+      // lock degSheetNames
+      lockDSN = 0;
+      var tabulateComparison = (inp1, tag, inp2, inp3)=>{  
+        inp1[tag] = new Tabulator(inp2, { 
+          pagination: "local",
+          paginationSize: 33,
+          data: inp3,
+          columns: [
+              {title: 'gene_id', field: 'gene_id'},
+              {title: 'length', field: 'gene_length'}, 
+              {title: 'gene_name', field: 'gene_name'},
+              {title: 'gene_type', field: 'gene_type'},
+              {title: 'logFC', field: 'logFC'},
+              {title: 'logCPM', field: 'logCPM'},
+              {title: 'LR', field: 'LR'},
+              {title: 'FDR', field: 'FDR'},
+              {title: 'PValue', field: 'PValue'},
+              {title: 'parameter', field: 'parameter'},
+              {title: 'comparison', field: 'comparison'}
+          ],  
+          rowClick: function(e, row){
+            var xy = row.getData()['comparison'];
+            var vs = xy.indexOf('vs');
+            var x = xy.slice(0, vs).trim();
+            var p = row.getData()['parameter'];
+            var y = xy.slice(vs+2, xy.length).trim();
+            var checkpointX = [];
+            var checkpointY = [];
+            var finalInputX = {};
+            var finalInputY = {};
+            // console.log({x, y, p})
+            var geneCounts = data[0].counts[gene_id.indexOf(`${row.getData()['gene_id']}`)];
+            for(var i=0; i<data[0].samples.length; i++){
+              checkpointX.push(data[0].samples[i][`${p}`] == x);
+              checkpointY.push(data[0].samples[i][`${p}`] == y);
+              if(data[0].samples[i][`${p}`] == x){
+                finalInputX[`${i}`]= geneCounts[i];
+              };
+              if(data[0].samples[i][`${p}`] == y){
+                finalInputY[`${i}`]= geneCounts[i];
+              }
+            };  
+            plotBox(x, y, [finalInputX, finalInputY], row.getData()); 
+          }
+        });
+        if(!lockDSN){
+          // to prevent storing table date upon filtering;
+          degSheetNames[`Comparison_${b+1}`] = inp1[tag];
+          lockDSN++;
+        }; 
+      };
+
+      tabulateComparison(comparison_tables,`${b+1}`, `#dgeaComparison${b+1}`, finalDataDgea[`comparison${b}`]);
+      // assinining function on each comparison buttons;
+      $(`#comparison${b+1}`).on('click', (x)=>{  
+        $('#searchGeneName').removeClass('d-none').addClass('d-flex');  
+        // console.log(x.currentTarget.innerText);
+        var theId = x.currentTarget.innerText; 
+        dgtag = theId.slice(11, theId.length);
+        $(`#geneBox${dgtag}`).removeClass('d-none').addClass('d-flex');
+        $(`#geneBox${dgtag}`).siblings().removeClass('d-flex').addClass('d-none'); 
+        theId = theId.replace(/ /g, '');
+        theId = "dgea" + theId; 
+        returnPgDgea(theId); 
+        // console.log(x, theId);
+        gene_id = [];
+        for(var g=0; g<data[0].genes.length; g++){
+          gene_id.push(data[0].genes[g].gene_id);
+        };
+        if(!onceComparison[`oc${dgtag}`]){  
+          tabulateComparison(tableComp,`${+dgtag-1}`, `#dgeaComparison${dgtag}`, finalDataDgea[`comparison${+dgtag-1}`]);
+          onceComparison[`oc${dgtag}`] = 1;
+        };
+        $(`#geneBox${dgtag}`).change(function(){ 
+          tableComp[`${+dgtag-1}`].setFilter([{field:"gene_name", type:"like", value:$(this).val()}]);
+        }); 
+      })
+    }; //end of for loop;
+
+    once = 0;
+    // if(once){
+    window.tables_summary = new Tabulator('#dgeaSummary', { 
+    pagination: "local",
+      paginationSize: 33,
+      data: tableSummaryDgea,
+      columns: [
+          {title: 'parameter', field: 'parameter'},
+          {title: 'comparison', field: 'comparison'}, 
+          {title: 'tests', field: 'tests'},
+          {title: 'nominal_degs', field: 'nominal_degs'},
+          {title: 'corrected_degs', field: 'corrected_degs'},
+          {title: 'group1', field: 'group1'},
+          {title: 'group2', field: 'group2'}
+      ], 
+    }); 
+        
+        
+    $('#btns button:nth-child(4)').on('click', ()=>{  
+      if(!once){ 
+        window.tables = new Tabulator('#dgeaSummary', { 
+          pagination: "local",
+          paginationSize: 33,
+          data: tableSummaryDgea,
+          columns: [
+              {title: 'parameter', field: 'parameter'},
+              {title: 'comparison', field: 'comparison'}, 
+              {title: 'tests', field: 'tests'},
+              {title: 'nominal_degs', field: 'nominal_degs'},
+              {title: 'corrected_degs', field: 'corrected_degs'},
+              {title: 'group1', field: 'group1'},
+              {title: 'group2', field: 'group2'}
+          ],
+          rowClick: function(e, row){ //upon clicking each row in summary will lead to the respective comparison page;
+            var para = row.getData()['parameter'].replace(/ /g, '');
+            var comp = row.getData()['comparison'].replace(/ /g, '');
+            var pc = comp + para; 
+            var rowTag = pmeterCheck.findIndex((p)=>{
+              return p === pc; 
+            }); 
+            document.getElementById(`comparison${rowTag+1}`).click();
+            if(!onceComparison[`oc${rowTag+1}`]){  
+              tabulateComparison(tableComp,`${+rowTag}`, `#dgeaComparison${rowTag+1}`, finalDataDgea[`comparison${+rowTag+1-1}`]) 
+              onceComparison[`oc${rowTag+1}`] = 1;
+            };
+            $('#searchGeneName').removeClass('d-none').addClass('d-flex'); 
+            $(`#geneBox${+rowTag+1}`).removeClass('d-none').addClass('d-flex');
+            $(`#geneBox${+rowTag+1}`).siblings().removeClass('d-flex').addClass('d-none');
+            $(`#geneBox${+rowTag+1}`).change(function(){  
+              tableComp[`${+rowTag}`].setFilter([{field:"gene_name", type:"like", value:$(this).val()}]);
+            });  
+          }
+        });
+      };
+      once = 1;
+    });    
+  });
+  </script>
+</body>
